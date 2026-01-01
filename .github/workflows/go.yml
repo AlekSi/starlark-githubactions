@@ -37,19 +37,8 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Dump event
-        run: |
-          go version
-          env
-          cat $GITHUB_EVENT_PATH
-
       - name: Checkout code
         uses: actions/checkout@v6
-
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: "go.mod"
 
       - name: Run tests
         run: |
