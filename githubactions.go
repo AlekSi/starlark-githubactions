@@ -12,7 +12,7 @@ import (
 	"go.starlark.net/starlarkstruct"
 )
 
-// NewModule constructs a Starlark NewModule for the given [Action].
+// NewModule constructs a Starlark module for the given [Action].
 func NewModule(name string, a *Action) *starlarkstruct.Module {
 	m := &starlarkstruct.Module{
 		Name:    name,

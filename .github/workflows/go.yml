@@ -42,5 +42,6 @@ jobs:
 
       - name: Run tests
         run: |
+          car $GITHUB_EVENT_PATH
           go mod tidy
           go test -v ./...
