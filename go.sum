@@ -1,7 +1,7 @@
 github.com/AlekSi/lazyerrors v0.5.0 h1:c4zM7P9S2seDJJ5UcEh9hayVVKGck/i7XE+JE6XXayI=
 github.com/AlekSi/lazyerrors v0.5.0/go.mod h1:uipmPehsHYFEViLPI0rSdXu7WvPcbQ2jfhkdik4kKb4=
-github.com/AlekSi/should v0.0.0-20251227175301-5dd514c288a1 h1:eB0YloO6Y1aBE6VKH0AF849eXzKttnV+G7mwtAleqTo=
-github.com/AlekSi/should v0.0.0-20251227175301-5dd514c288a1/go.mod h1:A29gKgjTRnxX527C27if2XgiSOiEYlsepOOKQObT3ec=
+github.com/AlekSi/should v0.0.0-20260101121228-0345e893611a h1:dTIFsznp3yDUaglqPordaN1t7quJeeRK0FlAvxaE7+c=
+github.com/AlekSi/should v0.0.0-20260101121228-0345e893611a/go.mod h1:47kmTSWWSFCsjoj7FZnVBn32egtGkyNZgSuDOvAgg8A=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/sethvargo/go-githubactions v1.3.2 h1:gkibLr/QjosgNWoCf1V58rTMRZw7xZtSB7dY4atbl1Y=

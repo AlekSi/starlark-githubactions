@@ -1,0 +1,46 @@
+---
+name: Go
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
+    # List all types to make it easier to enable new ones when they are needed.
+    types:
+      - assigned
+      - unassigned
+      - labeled
+      - unlabeled
+      - opened
+      - edited
+      # - closed
+      - reopened
+      - synchronize
+      - converted_to_draft
+      # - locked
+      - unlocked
+      - enqueued
+      - dequeued
+      - milestoned
+      - demilestoned
+      - ready_for_review
+      - review_requested
+      - review_request_removed
+      - auto_merge_enabled
+      - auto_merge_disabled
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Run tests
+        run: |
+          go mod tidy
+          go test -v ./...

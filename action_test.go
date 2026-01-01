@@ -296,5 +296,10 @@ func TestContext(t *testing.T) {
 	event, ok := v.(*starlark.Dict)
 	must.NotBeZero(t, ok)
 
-	_ = event
+	pr, _, err := event.Get(starlark.String("pull_request"))
+	must.BeZero(t, err)
+
+	v, _, err = pr.(*starlark.Dict).Get(starlark.String("title"))
+	must.BeZero(t, err)
+	should.BeEqual(t, starlark.String("Pull request title"), v)
 }
