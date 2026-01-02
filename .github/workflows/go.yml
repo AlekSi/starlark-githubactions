@@ -30,6 +30,8 @@ on:
       - auto_merge_enabled
       - auto_merge_disabled
 
+permissions: {}
+
 jobs:
   test:
     name: Test

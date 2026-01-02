@@ -16,7 +16,7 @@ func Example() {
 	getenv := func(key string) string {
 		switch key {
 		case "GITHUB_EVENT_PATH":
-			return "testdata/event.json"
+			return "event.json"
 		default:
 			return ""
 		}
@@ -36,24 +36,31 @@ func Example() {
 	}
 
 	script := `
-def merge_method():
+def check_pr():
 	ctx = githubactions.context()
 	pr = ctx.event.get("pull_request", {})
-	return pr.get("auto_merge", {}).get("merge_method", "")
+	if not pr:
+		fail("Not a 'pull_request' event")
 
-print(merge_method())
+	merge_method = pr.get("auto_merge", {}).get("merge_method", "")
+	if not merge_method:
+		fail("Auto-merge should be enabled")
+
+	print("Merge method:", merge_method)
+
+check_pr()
 `
 
 	opts := &syntax.FileOptions{}
 	thread := &starlark.Thread{
 		Print: func(th *starlark.Thread, msg string) {
-			fmt.Print(msg)
+			fmt.Println(msg)
 		},
 	}
+
 	if _, err := starlark.ExecFileOptions(opts, thread, "", script, predeclared); err != nil {
 		log.Fatal(err)
 	}
-
 	// Output:
-	// squash
+	// Merge method: squash
 }
