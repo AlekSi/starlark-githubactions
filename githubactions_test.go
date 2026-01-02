@@ -13,24 +13,23 @@ import (
 
 func Example() {
 	// Create a Starlark module for this example.
-	getenv := func(key string) string {
-		switch key {
-		case "GITHUB_EVENT_PATH":
-			return "event.json"
-		default:
-			return ""
-		}
-	}
 	module := githubactions.NewModule(
 		"githubactions",
 		githubactions.New(gogithubactions.New(
 			gogithubactions.WithWriter(os.Stdout),
-			gogithubactions.WithGetenv(getenv),
+			gogithubactions.WithGetenv(func(key string) string {
+				switch key {
+				case "GITHUB_EVENT_PATH":
+					return "testdata/event.json"
+				default:
+					return ""
+				}
+			}),
 		)),
 	)
 
 	// Add module to the predeclared global environment.
-	// Most users should use githubactions.Module instead.
+	// Most users should use githubactions.Module variable instead.
 	predeclared := starlark.StringDict{
 		"githubactions": module,
 	}
@@ -61,6 +60,9 @@ check_pr()
 	if _, err := starlark.ExecFileOptions(opts, thread, "check_pr.star", script, predeclared); err != nil {
 		log.Fatal(err)
 	}
+
+	// Note that this example fails on pkg.go.dev due to https://github.com/golang/go/issues/45475.
+
 	// Output:
 	// Merge method: squash
 }
