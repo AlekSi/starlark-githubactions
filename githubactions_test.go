@@ -58,7 +58,7 @@ check_pr()
 		},
 	}
 
-	if _, err := starlark.ExecFileOptions(opts, thread, "", script, predeclared); err != nil {
+	if _, err := starlark.ExecFileOptions(opts, thread, "check_pr.star", script, predeclared); err != nil {
 		log.Fatal(err)
 	}
 	// Output:
