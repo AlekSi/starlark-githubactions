@@ -42,6 +42,10 @@ jobs:
 
       - name: Run tests
         run: |
-          cat $GITHUB_EVENT_PATH
           go mod tidy
           go test -v ./...
+
+      - name: Check dirty
+        run: |
+          git status
+          git diff --exit-code
