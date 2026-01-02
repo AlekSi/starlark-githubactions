@@ -259,7 +259,7 @@ func TestContext(t *testing.T) {
 			"GITHUB_API_URL":           "https://api.github.com",
 			"GITHUB_BASE_REF":          "main",
 			"GITHUB_EVENT_NAME":        "push",
-			"GITHUB_EVENT_PATH":        "testdata/event.json",
+			"GITHUB_EVENT_PATH":        "event.json",
 			"GITHUB_GRAPHQL_URL":       "https://api.github.com/graphql",
 			"GITHUB_HEAD_REF":          "feature",
 			"GITHUB_JOB":               "test-job",
