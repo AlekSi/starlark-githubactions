@@ -2,12 +2,12 @@ package githubactions
 
 import (
 	"encoding/json"
+	"fmt"
 	"maps"
 	"math/big"
 	"os"
 	"slices"
 
-	"github.com/AlekSi/lazyerrors"
 	"github.com/sethvargo/go-githubactions"
 	"go.starlark.net/starlark"
 	"go.starlark.net/starlarkstruct"
@@ -24,7 +24,7 @@ func New(a *githubactions.Action) *Action {
 }
 
 // log logs a message using fmt.Printf-like function.
-func (a *Action) log(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple, logf func(msg string, args ...any)) (string, error) {
+func (a *Action) log(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple, logf func(msg string, args ...any)) (string, error) {
 	var msg string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "msg", &msg); err != nil {
 		return msg, err
@@ -98,7 +98,7 @@ func (a *Action) Fatal(th *starlark.Thread, fn *starlark.Builtin, args starlark.
 }
 
 // AddMatcher adds a new matcher with the given file path.
-func (a *Action) AddMatcher(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) AddMatcher(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var path string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "path", &path); err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ func (a *Action) AddMatcher(_ *starlark.Thread, fn *starlark.Builtin, args starl
 }
 
 // RemoveMatcher removes a matcher with the given owner name.
-func (a *Action) RemoveMatcher(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) RemoveMatcher(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var owner string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "owner", &owner); err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (a *Action) RemoveMatcher(_ *starlark.Thread, fn *starlark.Builtin, args st
 // AddMask adds a new field mask for the given value.
 // After called, future attempts to log the value will be replaced with "***" in log output.
 // See https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#masking-a-value-in-a-log.
-func (a *Action) AddMask(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) AddMask(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var value string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "value", &value); err != nil {
 		return nil, err
@@ -135,7 +135,7 @@ func (a *Action) AddMask(_ *starlark.Thread, fn *starlark.Builtin, args starlark
 // AddStepSummary writes the given markdown to the job summary.
 // If a job summary already exists, this value is appended.
 // See https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#adding-a-job-summary.
-func (a *Action) AddStepSummary(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) AddStepSummary(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var summary string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "summary", &summary); err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func (a *Action) AddStepSummary(_ *starlark.Thread, fn *starlark.Builtin, args s
 
 // Group starts a new collapsable region up to the next endgroup invocation.
 // See https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#grouping-log-lines.
-func (a *Action) Group(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) Group(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var title string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "title", &title); err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ func (a *Action) Group(_ *starlark.Thread, fn *starlark.Builtin, args starlark.T
 
 // EndGroup ends the current group.
 // See https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#grouping-log-lines.
-func (a *Action) EndGroup(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) EndGroup(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs); err != nil {
 		return nil, err
 	}
@@ -170,7 +170,7 @@ func (a *Action) EndGroup(_ *starlark.Thread, fn *starlark.Builtin, args starlar
 
 // GetInput gets the input by the given name.
 // Returns the empty string if the input is not defined.
-func (a *Action) GetInput(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) GetInput(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var name string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "name", &name); err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func (a *Action) GetInput(_ *starlark.Thread, fn *starlark.Builtin, args starlar
 
 // SetOutput sets an output parameter.
 // See https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-output-parameter.
-func (a *Action) SetOutput(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) SetOutput(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var name, value string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "name", &name, "value", &value); err != nil {
 		return nil, err
@@ -193,7 +193,7 @@ func (a *Action) SetOutput(_ *starlark.Thread, fn *starlark.Builtin, args starla
 
 // SaveState saves state to be used in the "finally" post job entry point.
 // See https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#sending-values-to-the-pre-and-post-actions.
-func (a *Action) SaveState(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) SaveState(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var name, value string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "name", &name, "value", &value); err != nil {
 		return nil, err
@@ -205,7 +205,7 @@ func (a *Action) SaveState(_ *starlark.Thread, fn *starlark.Builtin, args starla
 
 // SetEnv sets an environment variable.
 // See https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-environment-variable.
-func (a *Action) SetEnv(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) SetEnv(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var name, value string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "name", &name, "value", &value); err != nil {
 		return nil, err
@@ -217,7 +217,7 @@ func (a *Action) SetEnv(_ *starlark.Thread, fn *starlark.Builtin, args starlark.
 
 // AddPath adds a new system path to the PATH environment variable.
 // See https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#adding-a-system-path.
-func (a *Action) AddPath(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) AddPath(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	var path string
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs, "path", &path); err != nil {
 		return nil, err
@@ -228,20 +228,20 @@ func (a *Action) AddPath(_ *starlark.Thread, fn *starlark.Builtin, args starlark
 }
 
 // Context returns the GitHub Actions Context as a Starlark struct.
-func (a *Action) Context(_ *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func (a *Action) Context(th *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	if err := starlark.UnpackArgs(fn.Name(), args, kwargs); err != nil {
 		return nil, err
 	}
 
 	ctx, err := a.a.Context()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Context: %w", err)
 	}
 
 	// do not use ctx.Event; decode ourselves to convert to Starlark values
 	event, err := readEvent(ctx.EventPath)
 	if err != nil {
-		return nil, lazyerrors.Error(err)
+		return nil, fmt.Errorf("Context: %w", err)
 	}
 
 	res := starlarkstruct.FromStringDict(starlark.String("context"), starlark.StringDict{
@@ -291,11 +291,7 @@ func readEvent(path string) (starlark.Value, error) {
 
 	f, err := os.Open(path)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return starlark.None, nil
-		}
-
-		return nil, lazyerrors.Error(err)
+		return nil, fmt.Errorf("readEvent: %w", err)
 	}
 
 	defer f.Close()
@@ -305,12 +301,12 @@ func readEvent(path string) (starlark.Value, error) {
 
 	var e map[string]any
 	if err = d.Decode(&e); err != nil {
-		return nil, lazyerrors.Error(err)
+		return nil, fmt.Errorf("readEvent: failed to decode %s: %w", path, err)
 	}
 
 	event, err := jsonToStarlark(e)
 	if err != nil {
-		return nil, lazyerrors.Error(err)
+		return nil, fmt.Errorf("readEvent: %w", err)
 	}
 
 	return event, nil
@@ -326,7 +322,7 @@ func jsonToStarlark(v any) (starlark.Value, error) {
 		for i, e := range v {
 			sv, err := jsonToStarlark(e)
 			if err != nil {
-				return nil, lazyerrors.Error(err)
+				return nil, fmt.Errorf("jsonToStarlark: index %d: %w", i, err)
 			}
 
 			elems[i] = sv
@@ -340,11 +336,11 @@ func jsonToStarlark(v any) (starlark.Value, error) {
 		for _, k := range slices.Sorted(maps.Keys(v)) {
 			sv, err := jsonToStarlark(v[k])
 			if err != nil {
-				return nil, lazyerrors.Error(err)
+				return nil, fmt.Errorf("jsonToStarlark: key %q: %w", k, err)
 			}
 
 			if err = dict.SetKey(starlark.String(k), sv); err != nil {
-				return nil, lazyerrors.Error(err)
+				return nil, fmt.Errorf("jsonToStarlark: key %q: %w", k, err)
 			}
 		}
 
@@ -366,12 +362,12 @@ func jsonToStarlark(v any) (starlark.Value, error) {
 
 		f, err := v.Float64()
 		if err != nil {
-			return nil, lazyerrors.Error(err)
+			return nil, fmt.Errorf("jsonToStarlark: failed to convert json.Number: %w", err)
 		}
 
 		return starlark.Float(f), nil
 
 	default:
-		return nil, lazyerrors.Errorf("unsupported JSON value type: %T", v)
+		return nil, fmt.Errorf("jsonToStarlark: unsupported JSON type %T", v)
 	}
 }
