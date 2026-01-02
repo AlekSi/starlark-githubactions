@@ -7,12 +7,13 @@ package githubactions
 import (
 	"os"
 
+	"github.com/sethvargo/go-githubactions"
 	"go.starlark.net/starlark"
 	"go.starlark.net/starlarkstruct"
 )
 
-// module constructs a Starlark module for the given [action].
-func module(name string, a *action) *starlarkstruct.Module {
+// NewModule constructs a Starlark module for the given [Action].
+func NewModule(name string, a *Action) *starlarkstruct.Module {
 	m := &starlarkstruct.Module{
 		Name:    name,
 		Members: make(starlark.StringDict),
@@ -53,4 +54,10 @@ func module(name string, a *action) *starlarkstruct.Module {
 }
 
 // Module is the GitHub Actions Starlark module.
-var Module = module("githubactions", newAction(os.Stdout, os.Getenv))
+var Module = NewModule(
+	"githubactions",
+	New(githubactions.New(
+		githubactions.WithWriter(os.Stdout),
+		githubactions.WithGetenv(os.Getenv),
+	)),
+)

@@ -44,3 +44,8 @@ jobs:
         run: |
           go mod tidy
           go test -v ./...
+
+      - name: Check dirty
+        run: |
+          git status
+          git diff --exit-code

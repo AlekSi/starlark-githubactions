@@ -35,7 +35,32 @@
     "assignee": null,
     "assignees": [],
     "author_association": "OWNER",
-    "auto_merge": null,
+    "auto_merge": {
+      "commit_message": "",
+      "commit_title": "Export more identifiers (#2)",
+      "enabled_by": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/11512?v=4",
+        "events_url": "https://api.github.com/users/AlekSi/events{/privacy}",
+        "followers_url": "https://api.github.com/users/AlekSi/followers",
+        "following_url": "https://api.github.com/users/AlekSi/following{/other_user}",
+        "gists_url": "https://api.github.com/users/AlekSi/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/AlekSi",
+        "id": 11512,
+        "login": "AlekSi",
+        "node_id": "MDQ6VXNlcjExNTEy",
+        "organizations_url": "https://api.github.com/users/AlekSi/orgs",
+        "received_events_url": "https://api.github.com/users/AlekSi/received_events",
+        "repos_url": "https://api.github.com/users/AlekSi/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/AlekSi/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/AlekSi/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/AlekSi",
+        "user_view_type": "public"
+      },
+      "merge_method": "squash"
+    },
     "base": {
       "label": "AlekSi:main",
       "ref": "main",

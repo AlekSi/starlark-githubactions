@@ -48,9 +48,18 @@ func setup(tb testing.TB, w io.Writer, getenv githubactions.GetenvFunc) (*starla
 
 	th := &starlark.Thread{
 		Name: tb.Name(),
+		Print: func(th *starlark.Thread, msg string) {
+			tb.Logf("%s: %s", th.Name, msg)
+		},
 	}
 
-	m := module(tb.Name(), newAction(w, newGetenv))
+	m := NewModule(
+		tb.Name(),
+		New(githubactions.New(
+			githubactions.WithWriter(w),
+			githubactions.WithGetenv(newGetenv),
+		)),
+	)
 	return th, m, newGetenv
 }
 
